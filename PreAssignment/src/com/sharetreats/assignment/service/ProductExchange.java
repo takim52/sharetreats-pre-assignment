@@ -64,16 +64,16 @@ public final class ProductExchange {
     private int checkProduct(final String product) {
         if (product.length() != 9 || invalidProductCode(product)) {
             System.out.println(ProductExchangeStatus.INVALID_PRODUCT_CODE.getDescription());
-            System.out.println(String.format("입력하신 상품 코드 [%s]", product));
+            System.out.printf(String.format("입력하신 상품 코드 [%s]%s", product, System.lineSeparator()));
             return ProductExchangeStatus.INVALID_PRODUCT_CODE.getCode();
         }
 
         if (this.productCode.contains(product)) {
             if (this.productExchangeShop.containsKey(product)) {
-                System.out.println(String.format("상품 코드 : %s, 상점 코드 : %s, %s", product, this.productExchangeShop.get(product), ProductExchangeStatus.ALREADY_EXCHANGE.getDescription()));
+                System.out.printf(String.format("상품 코드 : %s, 상점 코드 : %s, %s%s", product, this.productExchangeShop.get(product), ProductExchangeStatus.ALREADY_EXCHANGE.getDescription(), System.lineSeparator()));
                 return ProductExchangeStatus.ALREADY_EXCHANGE.getCode();
             } else {
-                System.out.println(String.format("상품 코드 : %s, %s", product, ProductExchangeStatus.CAN_CHANGE.getDescription()));
+                System.out.printf(String.format("상품 코드 : %s, %s%s", product, ProductExchangeStatus.CAN_CHANGE.getDescription(), System.lineSeparator()));
                 return ProductExchangeStatus.CAN_CHANGE.getCode();
             }
         }
@@ -104,11 +104,11 @@ public final class ProductExchange {
 
         if (this.productCode.contains(product)) {
             if (this.productExchangeShop.containsKey(product)) {
-                System.out.println(String.format("상품 코드 : %s, 상점 코드 : %s, %s", product, this.productExchangeShop.get(product), ProductExchangeStatus.ALREADY_EXCHANGE.getDescription()));
+                System.out.printf(String.format("상품 코드 : %s, 상점 코드 : %s, %s%s", product, this.productExchangeShop.get(product), ProductExchangeStatus.ALREADY_EXCHANGE.getDescription(), System.lineSeparator()));
                 return ProductExchangeStatus.ALREADY_EXCHANGE.getCode();
             } else {
                 this.productExchangeShop.put(product, shop);
-                System.out.println(String.format("상점 코드 : %s, 상품 코드 : %s %s", shop, product, ProductExchangeStatus.CHANGE_SUCCESS.getDescription()));
+                System.out.printf(String.format("상점 코드 : %s, 상품 코드 : %s %s%s", shop, product, ProductExchangeStatus.CHANGE_SUCCESS.getDescription(), System.lineSeparator()));
                 return ProductExchangeStatus.CHANGE_SUCCESS.getCode();
             }
         }
