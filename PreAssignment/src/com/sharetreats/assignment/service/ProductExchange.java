@@ -15,7 +15,6 @@ public final class ProductExchange {
     private final HashMap<String, String> productExchangeShop;
 
     public ProductExchange(String[] products) {
-        System.out.println("상품 교환 서비스 입니다.");
         this.productCode = new HashSet<>(PRODUCE_COUNT);
         this.productExchangeShop = new HashMap<>(PRODUCE_COUNT);
 
@@ -29,7 +28,6 @@ public final class ProductExchange {
     }
 
     public ProductExchange(File file) {
-        System.out.println("상품 교환 서비스 입니다.");
         this.productCode = new HashSet<>(PRODUCE_COUNT);
         this.productExchangeShop = new HashMap<>(PRODUCE_COUNT);
 
@@ -56,7 +54,8 @@ public final class ProductExchange {
         if (command.equals(COMMAND_CHECK)) {
             return checkProduct(tokens);
         } else if (command.equals(COMMAND_HELP)) {
-            return help();
+            System.out.println(ProductExchangeStatus.HELP.getDescription());
+            return ProductExchangeStatus.HELP.getCode();
         } else if (command.equals(COMMAND_CLAIM)) {
             return exchangeProduct(tokens);
         }
@@ -86,18 +85,6 @@ public final class ProductExchange {
         return ProductExchangeStatus.NO_PRODUCT.getCode();
     }
 
-    private int help() {
-        System.out.println("커맨드는 CHECK, HELP, CLAIM 입니다.");
-        System.out.println("CHECK [상품코드]");
-        System.out.println("EX) CHECK 132421122");
-        System.out.println("HELP");
-        System.out.println("EX) HELP");
-        System.out.println("CLAIM [상점코드][상품코드]");
-        System.out.println("EX) CLAIM ABcde 123 231 123");
-        return 1;
-    }
-
-    // -4 : 올바르지 않은 상점코드
     private int exchangeProduct(String[] tokens) {
         String shopCode = tokens[1];
         if (isBadShopCode(shopCode)) {
@@ -117,7 +104,7 @@ public final class ProductExchange {
                 return ProductExchangeStatus.ALREADY_EXCHANGE.getCode();
             } else {
                 this.productExchangeShop.put(product, shopCode);
-                System.out.println(String.format("상점 코드 : %s, 상품 코드 : %s %s,", shopCode, product, ProductExchangeStatus.CHANGE_SUCCESS.getDescription()));
+                System.out.println(String.format("상점 코드 : %s, 상품 코드 : %s %s", shopCode, product, ProductExchangeStatus.CHANGE_SUCCESS.getDescription()));
                 return ProductExchangeStatus.CHANGE_SUCCESS.getCode();
             }
         }
