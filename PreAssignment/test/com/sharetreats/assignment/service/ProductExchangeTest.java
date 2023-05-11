@@ -25,7 +25,7 @@ class ProductExchangeTest {
 
     @DisplayName("올바른 커맨드 테스트")
     @ParameterizedTest(name = "[{index}번째 테스트 : {0}]")
-    @ValueSource(strings = {"check 123456789", "help", "claim abcdef 123456789"})
+    @ValueSource(strings = {"check 123456789", "help", "claim abcdef 123456789", "c h e c k  1 2 3 4 5 6 7 8 9", "c l a i m a b c d e f 1 2 3 4 5 6 7 8 9"})
     void validCommandTest(final String userInput) {
         assertEquals(1, this.productExchange.service(userInput));
     }
@@ -46,9 +46,16 @@ class ProductExchangeTest {
 
     @DisplayName("없는 상품 check 테스트")
     @ParameterizedTest(name = "[{index}번째 테스트 : {0}]")
-    @ValueSource(strings = {"check 12345678", "check 1234567a1", "check 123450789"})
+    @ValueSource(strings = {"check 133456789", "check 133456779", "check 133556789", "check 133466789"})
     void checkNoProductTest(final String userInput) {
         assertEquals(ProductExchangeStatus.NO_PRODUCT.getCode(), this.productExchange.service(userInput));
+    }
+
+    @DisplayName("허용되지 않는 상품 코드 check 테스트")
+    @ParameterizedTest(name = "[{index}번째 테스트 : {0}]")
+    @ValueSource(strings = {"check", "check 12345678a", "check 12345678", "check 1234567890"})
+    void invalidProductCodeTest(final String userInput) {
+        assertEquals(ProductExchangeStatus.INVALID_PRODUCT_CODE.getCode(), this.productExchange.service(userInput));
     }
 
     @DisplayName("이미 교환한 상품 check 테스트")
@@ -67,9 +74,30 @@ class ProductExchangeTest {
 
     @DisplayName("없는 상품 claim 테스트")
     @ParameterizedTest(name = "[{index}번째 테스트 : {0}]")
-    @ValueSource(strings = {"claim abcdef 12345678", "claim abcdef 1234567a1", "claim abcdef 123450789"})
+    @ValueSource(strings = {"claim abcdef 133456789", "claim abcdef 133456789", "claim abcdef 133556789"})
     void exchangeNoProductTest(final String userInput) {
         assertEquals(ProductExchangeStatus.NO_PRODUCT.getCode(), this.productExchange.service(userInput));
+    }
+
+    @DisplayName("허용되지 않는 상점 코드 또는 상품 코드 exchange 테스트")
+    @ParameterizedTest(name = "[{index}번째 테스트 : {0}]")
+    @ValueSource(strings = {"claim bcde 123456789", "claim abcdef 12345678"})
+    void invalidExchangeTest(final String userInput) {
+        assertEquals(ProductExchangeStatus.INVALID_PARAMETER.getCode(), this.productExchange.service(userInput));
+    }
+
+    @DisplayName("허용되지 않는 상점 코드 또는 상품 코드 exchange 테스트")
+    @ParameterizedTest(name = "[{index}번째 테스트 : {0}]")
+    @ValueSource(strings = {"claim abcde1 123456789", "claim 1bcdef 123456789"})
+    void invalidShopCodeExchangeTest(final String userInput) {
+        assertEquals(ProductExchangeStatus.INVALID_SHOP_CODE.getCode(), this.productExchange.service(userInput));
+    }
+
+    @DisplayName("허용되지 않는 상점 코드 또는 상품 코드 exchange 테스트")
+    @ParameterizedTest(name = "[{index}번째 테스트 : {0}]")
+    @ValueSource(strings = {"claim abcdef 12A456789", "claim abcdef 12345678a"})
+    void invalidProductCodeExchangeTest(final String userInput) {
+        assertEquals(ProductExchangeStatus.INVALID_PRODUCT_CODE.getCode(), this.productExchange.service(userInput));
     }
 
     @DisplayName("이미 교환한 상품 claim 테스트")
