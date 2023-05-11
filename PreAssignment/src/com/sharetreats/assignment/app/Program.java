@@ -14,14 +14,10 @@ public class Program {
         ProductExchange productExchange = new ProductExchange(products);
 
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        // 테스트를 위해 100회 제한
+        for (int i = 0; i < 100; ++i) {
             String userInput = scanner.nextLine();
-
-            if (userInput.equals("exit")) {
-                break;
-            } else {
-                productExchange.service(userInput);
-            }
+            productExchange.service(userInput);
         }
     }
 }
