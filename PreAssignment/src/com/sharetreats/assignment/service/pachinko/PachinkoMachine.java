@@ -11,6 +11,7 @@ import java.util.Scanner;
 public final class PachinkoMachine {
     private static final int PRODUCT_SIZE = 1024;
     private static final String DELIMITER = ",";
+    private static final Product NOTHING_PRODUCT = new Product("NOTHING", Rank.NOTHING, OffsetDateTime.now().withNano(0));
     private final HashMap<Rank, ArrayList<Product>> productByRank;
     private final HashMap<Rank, Integer> productIndex;
 
@@ -79,49 +80,54 @@ public final class PachinkoMachine {
         }
     }
 
-    public Rank draw(final OffsetDateTime drawTime, final boolean withB) {
+    public Product draw(final OffsetDateTime drawTime, final boolean withB) {
         assert this.productByRank.get(Rank.A).size() >= 2 && this.productByRank.get(Rank.B).size() >= 2
                 : "A, B 상품은 최소 2종류 이상이어야 합니다.";
 
         // A 등급부터 확인
-        if (tryDraw(Rank.A, drawTime)) {
-            return Rank.A;
+        Product product = drawProduct(Rank.A, drawTime);
+        if (product.getRank().equals(Rank.A)) {
+            return product;
         }
 
+        product = drawProduct(Rank.B, drawTime);
+
         // B 등급 확인
-        if (withB && tryDraw(Rank.B, drawTime)) {
-            return Rank.B;
+        if (withB && product.getRank().equals(Rank.B)) {
+            return product;
         }
 
         System.out.printf("뽑기 결과 | 꽝입니다.%s", System.lineSeparator());
-        return Rank.NOTHING;
+        return NOTHING_PRODUCT;
     }
 
-    private boolean tryDraw(final Rank rank, final OffsetDateTime drawTime) {
+    private Product drawProduct(final Rank rank, final OffsetDateTime drawTime) {
         if (isWin(rank)) {
             int startIndex = this.productIndex.get(rank);
             ArrayList<Product> products = this.productByRank.get(rank);
 
             // 유통기한이 남아있을 때
             Product product = products.get(startIndex);
+            //System.out.println(drawTime.compareTo(product.getExpirationDate()));
             if (drawTime.compareTo(product.getExpirationDate()) <= 0) {
                 System.out.printf("뽑기 결과 | 상품 : %s, 등급 : %s%s", product.getName(), product.getRank().getName(), System.lineSeparator());
                 this.productIndex.put(rank, (startIndex + 1) % products.size());
-                return true;
+                return products.get(startIndex);
             }
 
             int index = (startIndex + 1) % products.size();
             while (index != startIndex) {
                 product = products.get(index);
-                if (drawTime.compareTo(product.getExpirationDate()) >= 0) {
+                //System.out.println(drawTime.compareTo(product.getExpirationDate()));
+                if (drawTime.compareTo(product.getExpirationDate()) <= 0) {
                     System.out.printf("뽑기 결과 | 상품 : %s, 등급 : %s%s", product.getName(), product.getRank().getName(), System.lineSeparator());
                     this.productIndex.put(rank, (index + 1) % products.size());
-                    return true;
+                    return products.get(index);
                 }
                 index = (index + 1) % products.size();
             }
         }
-        return false;
+        return NOTHING_PRODUCT;
     }
 
     private boolean isWin(Rank rank) {

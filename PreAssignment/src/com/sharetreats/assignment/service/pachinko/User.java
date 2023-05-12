@@ -7,19 +7,24 @@ import java.util.UUID;
 public final class User {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("###,###");
     private final UUID userId;
-    private final PachinkoMachine pachinkoMachine;
     private long amount;
 
-    public User(final UUID userId, final PachinkoMachine pachinkoMachine) {
+    public User(final UUID userId) {
         this.userId = userId;
-        this.pachinkoMachine = pachinkoMachine;
+    }
+
+    public long getAmount() {
+        return this.amount;
     }
 
     public void charge(final long amount) {
-        this.amount += amount;
+        // 오버플로우 방지 - 처리 방침 바뀔 시 수정 필요
+        System.out.printf("충전 전 금액 : %s원%s", DECIMAL_FORMAT.format(this.amount), System.lineSeparator());
+        this.amount = Math.max(this.amount + amount, this.amount);
+        System.out.printf("충전 후 금액 : %s원%s", DECIMAL_FORMAT.format(this.amount), System.lineSeparator());
     }
 
-    public void draw(final int userInputCount, final OffsetDateTime drawTime) {
+    public void draw(final PachinkoMachine pachinkoMachine, final int userInputCount, final OffsetDateTime drawTime) {
         System.out.printf("현재 보유 금액 %s원%s", DECIMAL_FORMAT.format(this.amount), System.lineSeparator());
         long count = userInputCount;
         if (this.amount < userInputCount * 100L) {
@@ -37,9 +42,10 @@ public final class User {
         int bCount = 0;
         boolean withB = true;
         for (long i = 0L; i < count; ++i) {
-            Rank rank =  this.pachinkoMachine.draw(drawTime, withB);
-            assert rank != null : "Rank 의 값이 null 입니다.";
-            if (withB && rank.equals(Rank.B)) {
+            Product product =  pachinkoMachine.draw(drawTime, withB);
+            assert product != null : "Product 의 값이 null 입니다.";
+            assert bCount <= 3 : "B 등급 상품은 최대 3번까지만 뽑을 수 있습니다.";
+            if (withB && product.getRank().equals(Rank.B)) {
                 ++bCount;
                 if (2 < bCount) {
                     withB = false;

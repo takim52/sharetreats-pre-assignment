@@ -44,9 +44,9 @@ public class Program {
         File pachinkoFile = new File("C:\\sharetreats-pre-assignment\\PreAssignment\\pachinko.txt");
         PachinkoMachine pachinkoMachine1 = new PachinkoMachine(pachinkoFile);
 
-        User user = new User(UUID.randomUUID(), pachinkoMachine);
+        User user = new User(UUID.randomUUID());
         user.charge(100000L);
 
-        user.draw(1000, OffsetDateTime.now().withNano(0));
+        user.draw(pachinkoMachine, 1000, OffsetDateTime.now().withNano(0));
     }
 }
