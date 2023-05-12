@@ -1,4 +1,4 @@
-package com.sharetreats.assignment.service;
+package com.sharetreats.assignment.service.productexchange;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +41,6 @@ public final class ProductExchange {
         } catch (FileNotFoundException e) {
             // scanner 관련
             System.out.println("파일을 찾지 못했습니다.");
-            System.out.println("상품이 하나도 등록되어 있지 않습니다.");
         }
     }
 

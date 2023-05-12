@@ -1,4 +1,4 @@
-package com.sharetreats.assignment.service;
+package com.sharetreats.assignment.service.productexchange;
 
 public enum ProductExchangeStatus {
     BAD_COMMAND(-1, "잘못된 커맨드 입력입니다. HELP 커맨드를 입력해서 확인 해주세요."),

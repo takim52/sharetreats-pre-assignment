@@ -1,4 +1,4 @@
-package com.sharetreats.assignment.service;
+package com.sharetreats.assignment.service.productexchange;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
