@@ -1,5 +1,7 @@
 package com.sharetreats.assignment.app;
 
+import com.sharetreats.assignment.service.departmentheadcount.Company;
+import com.sharetreats.assignment.service.departmentheadcount.ResultCode;
 import com.sharetreats.assignment.service.pachinko.PachinkoMachine;
 import com.sharetreats.assignment.service.pachinko.User;
 import com.sharetreats.assignment.service.productexchange.ProductExchange;
@@ -27,7 +29,6 @@ public class Program {
             productExchange.service(userInput);
         }
 
-
         String[] pachinkoProducts = {
                 "CHICKEN, B, 2023-05-23T02:20:19+09:00",
                 "CIDER, A, 2023-05-23T02:28:56+09:00",
@@ -43,10 +44,53 @@ public class Program {
         PachinkoMachine pachinkoMachine = new PachinkoMachine(pachinkoProducts);
         File pachinkoFile = new File("C:\\sharetreats-pre-assignment\\PreAssignment\\pachinko.txt");
         PachinkoMachine pachinkoMachine1 = new PachinkoMachine(pachinkoFile);
-
         User user = new User(UUID.randomUUID());
         user.charge(100000L);
-
         user.draw(pachinkoMachine, 1000, OffsetDateTime.now().withNano(0));
+
+
+        System.out.println("조직 인원수 파악 서비스입니다.");
+        String[] departments =
+                {
+                        "HO, 0",
+                        "AS, 10",
+                        "DEV, 20",
+                        "QA, 970",
+                        "BK, 0",
+                        "GA, 20",
+                        "MS, 80",
+                };
+
+        String[] structure =
+                {
+                        "* > HO",
+                        "* > BK",
+                        "HO > AS",
+                        "HO > DEV",
+                        "HO > QA",
+                        "BK > GA",
+                        "BK > MS",
+                };
+
+        Company company = new Company("TEST");
+        for (String department : departments) {
+            String[] split = department.split(",");
+            String departmentName = split[0].trim();
+            int headCount = Integer.parseInt(split[1].trim());
+            ResultCode resultCode = company.addDepartment(departmentName, headCount);
+            System.out.printf("부서추가 | 부서명 : %s, 결과 : %s%s", departmentName, resultCode.getMsg(), System.lineSeparator());
+        }
+
+        for (String struct : structure) {
+            String[] split = struct.split(">");
+            String superDepartmentName = split[0].trim();
+            String subDepartmentName = split[1].trim();
+            ResultCode resultCode = company.addDepartmentRelation(superDepartmentName, subDepartmentName);
+            System.out.printf("부서간의 관계 설정 | 상위부서 명 : %s, 하위부서 명 : %s%s", superDepartmentName, subDepartmentName, System.lineSeparator());
+            System.out.printf("결과 : %s%s", resultCode.getMsg(), System.lineSeparator());
+        }
+
+        company.printHeadCount();
+        company.printDepartmentStructure();
     }
 }
